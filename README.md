@@ -156,8 +156,7 @@ This project is optimized for Vercel deployment with automatic builds and deploy
    {
      "buildCommand": "npm run build:vercel",
      "outputDirectory": "dist",
-     "framework": "vite",
-     "nodejs": "18.x"
+     "framework": "vite"
    }
    ```
 
