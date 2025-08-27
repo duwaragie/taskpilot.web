@@ -6,8 +6,10 @@ import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
 import SearchFilter from './components/SearchFilter';
 import DeletionTimer from './components/DeletionTimer';
+import ThemeToggle from './components/ThemeToggle';
 import ToastContainer from './components/ToastContainer';
 import { ToastProvider, useToast } from './contexts/ToastContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 interface PendingDeletion {
   taskId: number;
@@ -146,8 +148,15 @@ function AppContent() {
     });
   };
 
+    const handleReorderTasks = useCallback((reorderedTasks: Task[]) => {
+    setState(prev => ({
+      ...prev,
+      tasks: reorderedTasks
+    }));
+    storage.saveTasks(reorderedTasks);
+  }, []);
+
   const confirmDeleteTask = useCallback(async (taskId: number) => {
-    // Check if task still exists and we have a pending deletion
     const taskExists = state.tasks.some(task => task.id === taskId);
     if (!taskExists || !pendingDeletion || pendingDeletion.taskId !== taskId) {
       return;
@@ -182,44 +191,60 @@ function AppContent() {
       if (!task) return;
 
       await toggleTaskComplete(id);
+      const updatedTasks = state.tasks.map(t =>
+        t.id === id 
+          ? { ...t, completed: !t.completed }
+          : t
+      );
+      
       setState(prev => ({
         ...prev,
-        tasks: prev.tasks.map(t =>
-          t.id === id 
-            ? { ...t, completed: !t.completed }
-            : t
-        ),
+        tasks: updatedTasks,
       }));
+      
+      // Save to localStorage immediately
+      storage.saveTasks(updatedTasks);
+      
+      // Add toast notification
+      const newStatus = !task.completed;
+      addToast(
+        newStatus ? `Task marked as completed!` : `Task marked as pending!`,
+        'success'
+      );
     } catch (error) {
       setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Failed to toggle task',
       }));
+      addToast('Failed to update task', 'error');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-violet-900">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-violet-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-200">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+        <header className="text-center mb-12 relative">
+          <div className="absolute top-0 right-0">
+            <ThemeToggle />
+          </div>
+          <h1 className="text-5xl font-bold text-white dark:text-white mb-4 tracking-tight">
             Get Things Done!
           </h1>
-          <p className="text-xl text-purple-200 max-w-2xl mx-auto">
+          <p className="text-xl text-purple-200 dark:text-gray-300 max-w-2xl mx-auto">
             Your personal task manager to boost productivity and organize your day
           </p>
         </header>
 
         {/* Main Content Card */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-gray-900 dark:bg-white rounded-2xl shadow-2xl border border-gray-700 dark:border-gray-200 overflow-hidden transition-colors duration-200">
             <div className="p-8">
-              <div className="grid gap-8 lg:grid-cols-5">
+              <div className="grid gap-8 lg:grid-cols-4">
                 {/* Task Input Section */}
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-1">
                   <div className="sticky top-8">
-                    <h2 className="text-2xl font-bold text-white mb-6">Add New Task</h2>
+                    <h2 className="text-2xl font-bold text-white dark:text-gray-900 mb-6">Add New Task</h2>
                     <TaskInput 
                       onAddTask={handleAddTask}
                       isLoading={state.isLoading}
@@ -242,6 +267,7 @@ function AppContent() {
                     onEditTask={handleEditTask}
                     onDeleteTask={handleDeleteTask}
                     onToggleTask={handleToggleTask}
+                    onReorderTasks={handleReorderTasks}
                     isLoading={state.isLoading && state.tasks.length === 0}
                     error={state.error}
                   />
@@ -307,9 +333,11 @@ function AppContent() {
 
 function App() {
   return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

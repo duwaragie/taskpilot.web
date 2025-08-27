@@ -48,21 +48,21 @@ const TaskInput = ({ onAddTask, isLoading }: TaskInputProps) => {
               value={text}
               onChange={handleInputChange}
               placeholder="What is the task today?"
-              className={`w-full px-4 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
+              className={`w-full px-4 py-3 bg-gray-800 dark:bg-gray-100 border rounded-lg text-white dark:text-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition-colors ${
                 error 
                   ? 'border-red-500 focus:ring-red-500' 
-                  : 'border-gray-600 focus:ring-purple-500 focus:border-purple-500'
+                  : 'border-gray-600 dark:border-gray-300 focus:ring-purple-500 focus:border-purple-500'
               }`}
               disabled={isLoading}
               maxLength={100}
             />
-            <div className="absolute right-3 top-3 text-xs text-gray-500">
+            <div className="absolute right-3 top-3 text-xs text-gray-500 dark:text-gray-400">
               {text.length}/100
             </div>
           </div>
           
           {error && (
-            <p className="text-red-400 text-sm flex items-center space-x-1">
+            <p className="text-red-400 dark:text-red-500 text-sm flex items-center space-x-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
