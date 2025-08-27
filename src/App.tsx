@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task, TaskFormData, AppState } from './types';
 import { fetchTasks, createTask, updateTask, deleteTask, toggleTaskComplete } from './utils/api';
+import { storage } from './utils/storage';
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
+import SearchFilter from './components/SearchFilter';
 import DeletionTimer from './components/DeletionTimer';
 import ToastContainer from './components/ToastContainer';
 import { ToastProvider, useToast } from './contexts/ToastContext';
@@ -21,13 +23,46 @@ function AppContent() {
   });
   
   const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'completed'>('all');
 
   useEffect(() => {
     loadTasks();
   }, []);
 
+  useEffect(() => {
+    if (state.tasks.length > 0) {
+      storage.saveTasks(state.tasks);
+    }
+  }, [state.tasks]);
+
+  const filteredTasks = state.tasks.filter(task => {
+    const matchesSearch = task.text.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === 'all' || 
+      (filterStatus === 'completed' && task.completed) ||
+      (filterStatus === 'pending' && !task.completed);
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const taskCounts = {
+    total: state.tasks.length,
+    pending: state.tasks.filter(task => !task.completed).length,
+    completed: state.tasks.filter(task => task.completed).length,
+  };
+
   const loadTasks = async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
+    
+    const storedTasks = storage.loadTasks();
+    if (storedTasks.length > 0) {
+      setState(prev => ({
+        ...prev,
+        tasks: storedTasks,
+        isLoading: false,
+      }));
+      return;
+    }
     
     try {
       const response = await fetchTasks();
@@ -37,6 +72,7 @@ function AppContent() {
           tasks: response.data,
           isLoading: false,
         }));
+        storage.saveTasks(response.data);
       } else {
         setState(prev => ({
           ...prev,
@@ -192,9 +228,17 @@ function AppContent() {
                 </div>
 
                 {/* Task List Section */}
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-3 space-y-6">
+                  <SearchFilter
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    filterStatus={filterStatus}
+                    onFilterChange={setFilterStatus}
+                    taskCounts={taskCounts}
+                  />
+                  
                   <TaskList
-                    tasks={state.tasks}
+                    tasks={filteredTasks}
                     onEditTask={handleEditTask}
                     onDeleteTask={handleDeleteTask}
                     onToggleTask={handleToggleTask}
