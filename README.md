@@ -120,15 +120,14 @@ taskpilot.web/
 ### Development
 ```bash
 npm run dev          # Start development server with hot reload
-npm run build        # Build for production (with type checking)
-npm run build:vercel # Build for Vercel deployment (optimized)
+npm run build        # Build for production (Vercel-optimized)
+npm run build:local  # Build with type checking for local development
 npm run preview      # Preview production build locally
 ```
 
 ### Code Quality
 ```bash
 npm run lint         # Run ESLint for code quality checks
-npm run type-check   # Run TypeScript compiler check
 ```
 
 ## 🚀 Deployment
@@ -148,17 +147,13 @@ This project is optimized for Vercel deployment with automatic builds and deploy
    - Visit [vercel.com](https://vercel.com)
    - Import your GitHub repository
    - Vercel will automatically detect it's a Vite project
-   - Deploy with default settings
+   - Deploy with default settings (no custom configuration needed)
 
-3. **Custom Configuration**
-   The project includes a `vercel.json` file with optimized settings:
-   ```json
-   {
-     "buildCommand": "npm run build:vercel",
-     "outputDirectory": "dist",
-     "framework": "vite"
-   }
-   ```
+3. **Automatic Configuration**
+   - Vercel auto-detects Vite framework
+   - Uses `npm run build` command automatically
+   - Output directory: `dist` (detected automatically)
+   - Node.js version: Specified in `.nvmrc` and `package.json` engines
 
 ### Other Platforms
 - **Netlify**: Upload `dist` folder after running `npm run build`
@@ -166,9 +161,9 @@ This project is optimized for Vercel deployment with automatic builds and deploy
 - **Firebase Hosting**: Use `firebase deploy` after building
 
 ### Deployment Troubleshooting
-- **Permission Error**: The project uses `build:vercel` script to avoid TypeScript compilation issues
-- **Build Failed**: Ensure all dependencies are in `package.json`
-- **404 on Refresh**: Configure SPA fallback for client-side routing
+- **Permission Error**: Let Vercel auto-detect Vite framework instead of custom build commands
+- **Build Failed**: Ensure all dependencies are in `package.json` and Node.js version is 18+
+- **404 on Refresh**: Configure SPA fallback for client-side routing (Vercel handles this automatically for Vite)
 
 ## 🔧 API Configuration
 
