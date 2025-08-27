@@ -120,7 +120,8 @@ taskpilot.web/
 ### Development
 ```bash
 npm run dev          # Start development server with hot reload
-npm run build        # Build for production
+npm run build        # Build for production (with type checking)
+npm run build:vercel # Build for Vercel deployment (optimized)
 npm run preview      # Preview production build locally
 ```
 
@@ -129,6 +130,46 @@ npm run preview      # Preview production build locally
 npm run lint         # Run ESLint for code quality checks
 npm run type-check   # Run TypeScript compiler check
 ```
+
+## 🚀 Deployment
+
+### Vercel Deployment (Recommended)
+
+This project is optimized for Vercel deployment with automatic builds and deployments.
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Deploy to Vercel"
+   git push origin main
+   ```
+
+2. **Deploy to Vercel**
+   - Visit [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Vercel will automatically detect it's a Vite project
+   - Deploy with default settings
+
+3. **Custom Configuration**
+   The project includes a `vercel.json` file with optimized settings:
+   ```json
+   {
+     "buildCommand": "npm run build:vercel",
+     "outputDirectory": "dist",
+     "framework": "vite",
+     "nodejs": "18.x"
+   }
+   ```
+
+### Other Platforms
+- **Netlify**: Upload `dist` folder after running `npm run build`
+- **GitHub Pages**: Use GitHub Actions with Vite deployment workflow
+- **Firebase Hosting**: Use `firebase deploy` after building
+
+### Deployment Troubleshooting
+- **Permission Error**: The project uses `build:vercel` script to avoid TypeScript compilation issues
+- **Build Failed**: Ensure all dependencies are in `package.json`
+- **404 on Refresh**: Configure SPA fallback for client-side routing
 
 ## 🔧 API Configuration
 
