@@ -27,12 +27,10 @@ const TaskList = ({
   const completedTasks = tasks.filter(task => task.completed);
   const pendingTasks = tasks.filter(task => !task.completed);
 
-  // Scroll to sections when tasks move between completed/pending
   useEffect(() => {
     const currentCompletedCount = completedTasks.length;
     const currentPendingCount = pendingTasks.length;
     
-    // If completed count increased (task was marked as completed)
     if (currentCompletedCount > prevCompletedCount.current && completedSectionRef.current) {
       setTimeout(() => {
         completedSectionRef.current?.scrollIntoView({ 
@@ -40,10 +38,9 @@ const TaskList = ({
           block: 'start',
           inline: 'nearest'
         });
-      }, 300); // Delay to allow task animation to complete
+      }, 300);
     }
     
-    // If pending count increased (task was marked as pending)
     if (currentPendingCount > prevPendingCount.current && pendingSectionRef.current) {
       setTimeout(() => {
         pendingSectionRef.current?.scrollIntoView({ 
@@ -92,7 +89,6 @@ const TaskList = ({
         </div>
       ) : (
         <>
-          {/* Pending Tasks */}
           {pendingTasks.length > 0 && (
             <div ref={pendingSectionRef} className="space-y-4 scroll-mt-4">
               <h3 className="text-lg font-semibold text-purple-300">
@@ -112,7 +108,6 @@ const TaskList = ({
             </div>
           )}
 
-          {/* Completed Tasks */}
           {completedTasks.length > 0 && (
             <div ref={completedSectionRef} className="space-y-4 scroll-mt-4">
               <h3 className="text-lg font-semibold text-green-300">
@@ -132,7 +127,6 @@ const TaskList = ({
             </div>
           )}
 
-          {/* Task Summary */}
           <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
             <div className="flex justify-between text-sm text-gray-300">
               <span>Total Tasks: {tasks.length}</span>

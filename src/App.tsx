@@ -22,7 +22,6 @@ function AppContent() {
   
   const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion | null>(null);
 
-  // Load tasks on component mount
   useEffect(() => {
     loadTasks();
   }, []);

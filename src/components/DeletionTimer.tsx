@@ -6,7 +6,7 @@ interface DeletionTimerProps {
   taskTitle: string;
   onConfirmDelete: (taskId: number) => void;
   onAbortDelete: () => void;
-  duration?: number; // in milliseconds, default 5000 (5 seconds)
+  duration?: number;
 }
 
 const DeletionTimer: React.FC<DeletionTimerProps> = ({
@@ -33,18 +33,16 @@ const DeletionTimer: React.FC<DeletionTimerProps> = ({
       onAbortDelete();
     };
 
-    // Show single toast with abort action
     toastIdRef.current = addToast(
       `Deleting "${taskTitle}" in ${Math.ceil(duration / 1000)} seconds...`,
       'warning',
-      0, // Don't auto-remove, we'll handle it manually
+      0,
       {
         label: 'Undo',
         onClick: abortDeletion
       }
     );
 
-    // Auto-delete after duration
     timerRef.current = window.setTimeout(() => {
       if (toastIdRef.current) {
         removeToast(toastIdRef.current);
@@ -63,7 +61,7 @@ const DeletionTimer: React.FC<DeletionTimerProps> = ({
     };
   }, [taskId, taskTitle, onConfirmDelete, onAbortDelete, duration]);
 
-  return null; // This component doesn't render anything visible
+  return null;
 };
 
 export default DeletionTimer;

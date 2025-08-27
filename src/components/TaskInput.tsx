@@ -13,7 +13,6 @@ const TaskInput = ({ onAddTask, isLoading }: TaskInputProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
     if (!text.trim()) {
       setError('Task text is required');
       return;
@@ -29,7 +28,6 @@ const TaskInput = ({ onAddTask, isLoading }: TaskInputProps) => {
       return;
     }
 
-    // Clear error and submit
     setError('');
     onAddTask({ text: text.trim() });
     setText('');
@@ -37,7 +35,7 @@ const TaskInput = ({ onAddTask, isLoading }: TaskInputProps) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
-    if (error) setError(''); // Clear error when user starts typing
+    if (error) setError('');
   };
 
   return (

@@ -1,9 +1,7 @@
 import { Task, TaskFormData, ApiResponse } from '../types';
 
-// Mock API base URL for tasks - replace with your actual API URL
 const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
 
-// JSONPlaceholder Todo interface (for API integration)
 interface JsonPlaceholderTodo {
   userId: number;
   id: number;
@@ -11,7 +9,6 @@ interface JsonPlaceholderTodo {
   completed: boolean;
 }
 
-// English task texts to replace the Latin JSONPlaceholder titles
 const englishTaskTexts = [
   'Complete project documentation',
   'Review and test new features',
@@ -35,20 +32,15 @@ const englishTaskTexts = [
   'Practice coding interview questions'
 ];
 
-// Convert JSONPlaceholder todo to our Task format with required structure
 const convertToTask = (todo: JsonPlaceholderTodo, index: number): Task => ({
   id: todo.id,
   text: englishTaskTexts[index % englishTaskTexts.length] || `Task ${todo.id}`,
   completed: todo.completed,
-  createdAt: new Date().toISOString(), // ISO 8601 format as required
+  createdAt: new Date().toISOString(),
 });
 
-// Generate a unique ID for new tasks
 const generateId = () => Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000);
 
-/**
- * GET /tasks - Fetch all tasks (using JSONPlaceholder /todos endpoint)
- */
 export const fetchTasks = async (): Promise<ApiResponse<Task[]>> => {
   try {
     const response = await fetch(`${API_BASE_URL}/todos`);
@@ -59,7 +51,6 @@ export const fetchTasks = async (): Promise<ApiResponse<Task[]>> => {
     
     const todos: JsonPlaceholderTodo[] = await response.json();
     
-    // Convert JSONPlaceholder todos to our Task format with English text (limit to first 10)
     const tasks: Task[] = todos.slice(0, 10).map((todo, index) => convertToTask(todo, index));
 
     return {
